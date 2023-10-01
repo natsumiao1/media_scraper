@@ -7,8 +7,8 @@ if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
-// 获取文件夹内容
-async function getFolderContent() {
+// 打开文件夹
+async function openMediaFolder() {
   const { canceled, filePaths } = await dialog.showOpenDialog({
     properties: ['openDirectory'],
     defaultPath: 'Z:/media/video/电影'
@@ -16,15 +16,31 @@ async function getFolderContent() {
 
 
   if (!canceled) {
-    var subfolders = fs.readdirSync(filePaths[0], { withFileTypes: true });
-    subfolders = subfolders.filter(item => item.isDirectory());
-    // console.log(subfolders)
-    return subfolders;
+    return getFolderContent(filePaths[0]);
   }
   return [];
 }
 
+// 获取文件夹内容
+function getFolderContent(folderPath) {
+  if (folderPath === undefined) {
+    folderPath = store.get('path.lastOpenFolder')
+  }
 
+  try {
+    const subfolders = fs.readdirSync(folderPath, { withFileTypes: true });
+    const folderNames = subfolders
+      .filter((item) => item.isDirectory())
+
+    return folderNames;
+  } catch (error) {
+    console.error('获取文件夹内容出错:', error);
+    return [];
+  }
+}
+
+const Store = require('electron-store');
+const store = new Store();
 
 
 const createWindow = () => {
@@ -46,6 +62,12 @@ const createWindow = () => {
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
+
+  // 初始化列表
+  const folderNames = getFolderContent();
+  // console.log('folderNames', folderNames);
+  mainWindow.webContents.send('initFolderContent', folderNames)
+
 };
 
 // This method will be called when Electron has finished
@@ -72,4 +94,4 @@ app.on('activate', () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
-ipcMain.handle('getFolderContent', getFolderContent);
+ipcMain.handle('getFolderContent', openMediaFolder);

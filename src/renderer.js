@@ -20,6 +20,8 @@ btn.addEventListener('click', async () => {
     setMediaListContent(folderNames);
 })
 
-// 启动时调用一次
-const folderNames = await window.electronAPI.getFolderContent();
-setMediaListContent(folderNames);
+
+window.electronAPI.initFolderContent((_event, value) => {
+    console.log('------------')
+    console.log(value)
+})
