@@ -1,10 +1,31 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog } = require('electron')
 const path = require('path');
+import * as fs from 'fs';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
   app.quit();
 }
+
+// 获取文件夹内容
+async function getFolderContent() {
+  const { canceled, filePaths } = await dialog.showOpenDialog({
+    properties: ['openDirectory'],
+    defaultPath: 'Z:/media/video/电影'
+  })
+
+
+  if (!canceled) {
+    var subfolders = fs.readdirSync(filePaths[0], { withFileTypes: true });
+    subfolders = subfolders.filter(item => item.isDirectory());
+    // console.log(subfolders)
+    return subfolders;
+  }
+  return [];
+}
+
+
+
 
 const createWindow = () => {
   // Create the browser window.
@@ -51,3 +72,4 @@ app.on('activate', () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
+ipcMain.handle('getFolderContent', getFolderContent);
