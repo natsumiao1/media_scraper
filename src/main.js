@@ -16,27 +16,37 @@ async function openMediaFolder() {
 
 
   if (!canceled) {
-    return getFolderContent(filePaths[0]);
+    return _getFolderContent(filePaths[0]);
   }
   return [];
 }
 
-// 获取文件夹内容
-function getFolderContent(event, folderPath) {
+// 获取文件夹内容, 返回子文件夹名
+function _getFolderContent(folderPath) {
   if (folderPath === undefined) {
     folderPath = store.get('path.lastOpenFolder')
+  } else {
+    store.set('path.lastOpenFolder', folderPath)
   }
 
   try {
     const subfolders = fs.readdirSync(folderPath, { withFileTypes: true });
-    const folderNames = subfolders
+    var folderNames = subfolders
       .filter((item) => item.isDirectory())
+      .map(item => ({
+        'name': item.name,
+        'path': path.join(folderPath, item.name)
+      }))
 
     return folderNames;
   } catch (error) {
     console.error('获取文件夹内容出错:', error);
     return [];
   }
+}
+
+function initMediaListHandler(_event, folderPath) {
+  return _getFolderContent(folderPath);
 }
 
 const Store = require('electron-store');
@@ -64,7 +74,7 @@ const createWindow = () => {
   mainWindow.webContents.openDevTools();
 
   // 初始化列表
-  const folderNames = getFolderContent();
+  const folderNames = _getFolderContent();
   // console.log('folderNames', folderNames);
   mainWindow.webContents.send('initFolderContent', folderNames)
 
@@ -95,7 +105,7 @@ app.on('activate', () => {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
 ipcMain.handle('getFolderContent', openMediaFolder);
-ipcMain.handle('getFolderContent2', getFolderContent);
+ipcMain.handle('initMediaList', initMediaListHandler);
 
 // const { QueryParameters } = require('.\entities');
 // const { ImageDownloader, Movie } = require('./src/common/tmdb');
