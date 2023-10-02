@@ -20,8 +20,13 @@ btn.addEventListener('click', async () => {
     setMediaListContent(folderNames);
 })
 
+async function updateFolderContent() {
+    const folderNames = await window.electronAPI.getFolderContent2();
+    setMediaListContent(folderNames);
+}
 
-window.electronAPI.initFolderContent((_event, value) => {
-    console.log('------------')
-    console.log(value)
-})
+
+// 页面加载完成时更新文件夹内容
+window.addEventListener('DOMContentLoaded', () => {
+    updateFolderContent();
+});

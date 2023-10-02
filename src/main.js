@@ -22,7 +22,7 @@ async function openMediaFolder() {
 }
 
 // 获取文件夹内容
-function getFolderContent(folderPath) {
+function getFolderContent(event, folderPath) {
   if (folderPath === undefined) {
     folderPath = store.get('path.lastOpenFolder')
   }
@@ -95,3 +95,41 @@ app.on('activate', () => {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
 ipcMain.handle('getFolderContent', openMediaFolder);
+ipcMain.handle('getFolderContent2', getFolderContent);
+
+// const { QueryParameters } = require('.\entities');
+// const { ImageDownloader, Movie } = require('./src/common/tmdb');
+// const imageDownloader = new ImageDownloader();
+// const movieClass = new Movie();
+
+// // 主函数，使用 async/await 处理异步操作
+// async function main() {
+//   const folderPath = 'Z:/media/video/电影/蜘蛛侠 英雄无归 4K REMUX(原盘 蓝光)'
+//   const mediaName = path.basename(folderPath);
+//   console.log(mediaName)
+
+//   imageDownloader.setFolder(folderPath)
+
+//   const movieName = 'Spider-Man: No Way Home';
+//   const params = new QueryParameters(movieName);
+
+//   try {
+//     const movies = await movieClass.byName(params);
+//     const movie = await movieClass.byId(634649)
+
+//     if (movies.length > 0) {
+//       const movie = movies[0]
+//       console.log(movie);
+
+//       imageDownloader.poster(movie.poster_path);
+//       imageDownloader.background(movie.backdrop_path);
+
+//     } else {
+//       console.log('未找到与查询匹配的电影。');
+//     }
+//   } catch (error) {
+//     console.error('查询电影失败');
+//   }
+// }
+
+// main()
