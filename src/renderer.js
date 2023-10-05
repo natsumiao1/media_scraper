@@ -8,9 +8,25 @@ function setMediaListContent(medias) {
 
     // 将媒体名添加到列表中
     medias.forEach(media => {
-        const oneMediaLi = document.createElement('li');
-        oneMediaLi.textContent = media.name;
-        mediaList.appendChild(oneMediaLi);
+        const mediaItem = document.createElement('div');
+
+        const mediaTitle = document.createElement('div');
+        mediaTitle.textContent = media.name;
+
+        const nfoStatus = document.createElement('div');
+        nfoStatus.textContent = `NFO文件: ${media.hasNFO ? '是' : '否'}`;
+
+        const button = document.createElement('button');
+        button.textContent = '开始刮削';
+        button.addEventListener('click', () => {
+            window.electronAPI.startScrap(media);
+        });
+
+        mediaItem.appendChild(mediaTitle);
+        mediaItem.appendChild(nfoStatus);
+        mediaItem.appendChild(button);
+
+        mediaList.appendChild(mediaItem);
     });
 }
 

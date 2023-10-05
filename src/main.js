@@ -1,6 +1,7 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron')
 const path = require('path');
 import * as fs from 'fs';
+import * as handler from './handler';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -100,40 +101,4 @@ app.on('activate', () => {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
 ipcMain.handle('getFolderContent', openMediaFolder);
-
-const { QueryParameters } = require('./entity');
-const { ImageDownloader, Movie } = require('./tmdb');
-// const imageDownloader = new ImageDownloader();
-// const movieClass = new Movie();
-
-// // 主函数，使用 async/await 处理异步操作
-// async function main() {
-//   const folderPath = 'Z:/media/video/电影/蜘蛛侠 英雄无归 4K REMUX(原盘 蓝光)'
-//   const mediaName = path.basename(folderPath);
-//   console.log(mediaName)
-
-//   imageDownloader.setFolder(folderPath)
-
-//   const movieName = 'Spider-Man: No Way Home';
-//   const params = new QueryParameters(movieName);
-
-//   try {
-//     const movies = await movieClass.byName(params);
-//     const movie = await movieClass.byId(634649)
-
-//     if (movies.length > 0) {
-//       const movie = movies[0]
-//       console.log(movie);
-
-//       imageDownloader.poster(movie.poster_path);
-//       imageDownloader.background(movie.backdrop_path);
-
-//     } else {
-//       console.log('未找到与查询匹配的电影。');
-//     }
-//   } catch (error) {
-//     console.error('查询电影失败');
-//   }
-// }
-
-// main()
+ipcMain.on('startScrap', handler.startScrap);

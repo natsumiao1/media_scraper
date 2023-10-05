@@ -34,7 +34,7 @@ class Movie {
             const response = await this.api.get(apiUrl, { params });
             return response.data.results;
         } catch (error) {
-            console.error('搜索电影名出错: ', error);
+            console.error("can't search movie by name: ", error);
             throw error;
         }
     }
@@ -45,7 +45,7 @@ class Movie {
             const result = await this.api.get('movie/634649');
             return result.data;
         } catch (error) {
-            console.error('搜索电影id出错: ', error);
+            console.error("can't search movie by id", error);
             throw error;
         }
     }
