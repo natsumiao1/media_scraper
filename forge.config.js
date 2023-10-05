@@ -35,6 +35,13 @@ module.exports = {
             entry: 'src/preload.js',
             config: 'vite.preload.config.mjs',
           },
+          {
+            entry: {
+              entity: 'src/entity.js',
+              tmdb: 'src/tmdb.js'
+            },
+            config: 'vite.preload.config.mjs',
+          },
         ],
         renderer: [
           {

@@ -11,9 +11,8 @@ if (require('electron-squirrel-startup')) {
 async function openMediaFolder() {
   const { canceled, filePaths } = await dialog.showOpenDialog({
     properties: ['openDirectory'],
-    defaultPath: 'Z:/media/video/电影'
+    defaultPath: store.get('path.lastOpenFolder')
   })
-
 
   if (!canceled) {
     return _getFolderContent(filePaths[0]);
@@ -45,10 +44,6 @@ function _getFolderContent(folderPath) {
   }
 }
 
-function initMediaListHandler(_event, folderPath) {
-  return _getFolderContent(folderPath);
-}
-
 const Store = require('electron-store');
 const store = new Store();
 
@@ -73,10 +68,10 @@ const createWindow = () => {
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
 
-  // 初始化列表
-  const folderNames = _getFolderContent();
-  // console.log('folderNames', folderNames);
-  mainWindow.webContents.send('initFolderContent', folderNames)
+  mainWindow.webContents.once("did-finish-load", () => {
+    const folderNames = _getFolderContent();
+    mainWindow.webContents.send('initMediaListAtStart', folderNames)
+  });
 
 };
 
@@ -105,10 +100,9 @@ app.on('activate', () => {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
 ipcMain.handle('getFolderContent', openMediaFolder);
-ipcMain.handle('initMediaList', initMediaListHandler);
 
-// const { QueryParameters } = require('.\entities');
-// const { ImageDownloader, Movie } = require('./src/common/tmdb');
+const { QueryParameters } = require('./entity');
+const { ImageDownloader, Movie } = require('./tmdb');
 // const imageDownloader = new ImageDownloader();
 // const movieClass = new Movie();
 

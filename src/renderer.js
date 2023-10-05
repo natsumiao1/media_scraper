@@ -8,20 +8,20 @@ function setMediaListContent(medias) {
 
     // 将媒体名添加到列表中
     medias.forEach(media => {
-        const folderItem = document.createElement('li');
-        folderItem.textContent = media.name;
-        mediaList.appendChild(folderItem);
+        const oneMediaLi = document.createElement('li');
+        oneMediaLi.textContent = media.name;
+        mediaList.appendChild(oneMediaLi);
     });
 }
 
-// 页面加载完成时初始化媒体列表
-window.addEventListener('DOMContentLoaded', async () => {
-    const folderNames = await window.electronAPI.initMediaList();
-    setMediaListContent(folderNames);
-});
+// 打开APP时初始化媒体列表
+window.electronAPI.initMediaList((_event, medias) => {
+    setMediaListContent(medias);
+})
 
+// 设定媒体库
 btn.addEventListener('click', async () => {
-    const folderNames = await window.electronAPI.getFolderContent();
-    setMediaListContent(folderNames);
+    const medias = await window.electronAPI.getFolderContent();
+    setMediaListContent(medias);
 })
 
